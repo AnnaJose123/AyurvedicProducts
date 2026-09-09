@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ayurvedic Herbal Catalog - AyurvedaVeda Store{% endblock %}
+
+{% block content %}
+<div class="container section" style="padding-top: 40px;">
+    <!-- Page Header Banner -->
+    <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: #ffffff; padding: 48px; border-radius: var(--radius-lg); margin-bottom: 40px;">
+        <span style="color: var(--color-accent); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem;">Pure Botanical Store</span>
+        <h1 style="color: #ffffff; font-size: 2.6rem; margin-top: 6px;">Ayurvedic Formulations & Remedies</h1>
+        <p style="color: #d1deda; max-width: 600px; margin-top: 8px;">Filter by your Dosha type, remedy category, or search specific herbs to find your perfect holistic balance.</p>
+    </div>
+
+    <!-- Content Layout: Sidebar + Grid -->
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 36px;">
+        <!-- Filters Sidebar -->
+        <aside style="background: #ffffff; padding: 28px; border-radius: var(--radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-soft); height: fit-content;">
+            <h3 style="font-size: 1.3rem; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 2px solid #f0ede6; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fa-solid fa-sliders" style="color: var(--color-accent-dark);"></i> Filter Catalog</span>
+                <a href="{% url 'product_list' %}" style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">Reset</a>
+            </h3>
+
+            <form action="{% url 'product_list' %}" method="GET">
+                <!-- Search Query -->
+                <div class="form-group">
+                    <label>Search Keyword</label>
+                    <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="e.g. Ashwagandha, Oil..." class="form-control">
+                </div>
+
+                <!-- Categories Filter -->
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" class="form-control">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.slug }}" {% if selected_category and selected_category.slug == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Dosha Filter -->
+                <div class="form-group">
+                    <label>Dosha Type</label>
+                    <select name="dosha" class="form-control">
+                        <option value="all" {% if current_dosha == 'all' %}selected{% endif %}>All Body Types (Tridoshic)</option>
+                        <option value="vata" {% if current_dosha == 'vata' %}selected{% endif %}>Vata Pacifying</option>
+                        <option value="pitta" {% if current_dosha == 'pitta' %}selected{% endif %}>Pitta Pacifying</option>
+                        <option value="kapha" {% if current_dosha == 'kapha' %}selected{% endif %}>Kapha Pacifying</option>
+                    </select>
+                </div>
+
+                <!-- Sort Order -->
+                <div class="form-group">
+                    <label>Sort By</label>
+                    <select name="sort" class="form-control">
+                        <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest Arrival</option>
+                        <option value="price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="price_high" {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>Highest Rated</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                    Apply Filters
+                </button>
+            </form>
+        </aside>
+
+        <!-- Products List Grid -->
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: #ffffff; padding: 16px 24px; border-radius: var(--radius-md); border: 1px solid var(--color-border);">
+                <div>
+                    Showing <strong>{{ products.count }}</strong> organic remedies
+                    {% if selected_category %} in <span style="color: var(--color-secondary); font-weight: 700;">{{ selected_category.name }}</span>{% endif %}
+                </div>
+            </div>
+
+            {% if products %}
+                <div class="products-grid">
+                    {% for product in products %}
+                        <div class="product-card">
+                            <div class="product-badge-group">
+                                {% if product.discount_percent > 0 %}
+                                    <span class="badge-discount">{{ product.discount_percent }}% OFF</span>
+                                {% endif %}
+                                <span class="badge-dosha">{{ product.get_dosha_type_display }}</span>
+                            </div>
+
+                            <a href="{% url 'product_detail' product.slug %}" class="product-img-wrapper">
+                                <img src="{{ product.get_image_url }}" alt="{{ product.name }}" loading="lazy">
+                            </a>
+
+                            <div class="product-content">
+                                <span class="product-category">{{ product.category.name }}</span>
+                                <a href="{% url 'product_detail' product.slug %}" class="product-title">{{ product.name }}</a>
+                                <p class="product-subtitle">{{ product.subtitle }}</p>
+
+                                <div class="product-rating">
+                                    <i class="fa-solid fa-star"></i>
+                                    <strong>{{ product.rating }}</strong>
+                                    <span>({{ product.review_count }})</span>
+                                </div>
+
+                                <div class="product-footer">
+                                    <div class="price-box">
+                                        <span class="price-current">₹{{ product.current_price|floatformat:0 }}</span>
+                                        {% if product.discount_price and product.discount_price < product.price %}
+                                            <span class="price-old">₹{{ product.price|floatformat:0 }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <button type="button" class="btn-add-cart js-add-cart-ajax" data-url="{% url 'add_to_cart' product.id %}">
+                                        <i class="fa-solid fa-cart-plus"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="background: #ffffff; padding: 60px; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--color-border);">
+                    <i class="fa-solid fa-seedling" style="font-size: 3rem; color: var(--color-accent); margin-bottom: 16px;"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 10px;">No remedies found</h3>
+                    <p style="color: var(--color-text-muted); margin-bottom: 24px;">Try searching for a different herb name or clearing filters.</p>
+                    <a href="{% url 'product_list' %}" class="btn-primary">View All Products</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
