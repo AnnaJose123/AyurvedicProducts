@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - AyurvedaVeda Organic Herbs{% endblock %}
+
+{% block content %}
+<div class="container section" style="padding-top: 40px;">
+    <!-- Breadcrumb -->
+    <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 24px;">
+        <a href="{% url 'home' %}">Home</a> &nbsp;/&nbsp;
+        <a href="{% url 'product_list' %}">Store Catalog</a> &nbsp;/&nbsp;
+        <a href="{% url 'category_products' product.category.slug %}">{{ product.category.name }}</a> &nbsp;/&nbsp;
+        <span style="color: var(--color-primary); font-weight: 600;">{{ product.name }}</span>
+    </div>
+
+    <!-- Product Detail Section -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; margin-bottom: 60px;">
+        <!-- Product Image -->
+        <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft);">
+            <div style="position: relative; width: 100%; height: 380px; border-radius: var(--radius-md); overflow: hidden;">
+                <img src="{{ product.get_image_url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; top: 16px; left: 16px; display: flex; gap: 8px;">
+                    <span class="badge-dosha">{{ product.get_dosha_type_display }}</span>
+                    {% if product.discount_percent > 0 %}
+                        <span class="badge-discount">{{ product.discount_percent }}% OFF</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info & Purchase Form -->
+        <div>
+            <span style="color: var(--color-secondary); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1.5px;">{{ product.category.name }}</span>
+            <h1 style="font-size: 2.2rem; margin: 8px 0 12px; line-height: 1.2;">{{ product.name }}</h1>
+            <p style="color: var(--color-text-muted); font-size: 1.05rem; margin-bottom: 16px;">{{ product.subtitle }}</p>
+
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <div style="color: #f39c12; font-size: 1rem;">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <strong>{{ product.rating }} / 5.0</strong>
+                <span style="color: #888;">({{ reviews.count }} Customer Reviews)</span>
+            </div>
+
+            <div style="background: #f7f5ee; padding: 20px; border-radius: var(--radius-md); margin-bottom: 28px;">
+                <div style="display: flex; align-items: baseline; gap: 16px;">
+                    <span style="font-size: 2rem; font-weight: 700; color: var(--color-primary);">₹{{ product.current_price|floatformat:0 }}</span>
+                    {% if product.discount_price and product.discount_price < product.price %}
+                        <span style="font-size: 1.1rem; color: #888; text-decoration: line-through;">₹{{ product.price|floatformat:0 }}</span>
+                        <span style="color: var(--color-terracotta); font-weight: 700;">Save ₹{{ product.price|add:product.discount_price|floatformat:0 }}</span>
+                    {% endif %}
+                </div>
+                <div style="font-size: 0.85rem; color: #666; margin-top: 6px;">
+                    <i class="fa-solid fa-truck"></i> FREE Shipping on orders over ₹499 &bull; Taxes included.
+                </div>
+            </div>
+
+            <!-- Add to Cart Form -->
+            <form action="{% url 'add_to_cart' product.id %}" method="POST" style="display: flex; gap: 16px; margin-bottom: 32px;">
+                {% csrf_token %}
+                <div style="width: 100px;">
+                    <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control" style="text-align: center; font-weight: 700;">
+                </div>
+                <button type="submit" class="btn-primary" style="flex-grow: 1; justify-content: center;">
+                    <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                </button>
+            </form>
+
+            <div style="border-top: 1px solid var(--color-border); padding-top: 20px; display: flex; flex-direction: column; gap: 12px; font-size: 0.92rem;">
+                <div><i class="fa-solid fa-check-circle" style="color: var(--color-success);"></i> <strong>In Stock:</strong> {{ product.stock }} units ready to ship</div>
+                <div><i class="fa-solid fa-leaf" style="color: var(--color-secondary);"></i> <strong>Dosha Balance:</strong> {{ product.get_dosha_type_display }}</div>
+                <div><i class="fa-solid fa-shield-cat" style="color: var(--color-accent-dark);"></i> <strong>Authenticity:</strong> 100% Herbal & AYUSH Certified</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Tabs / Detailed Content -->
+    <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 36px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft); margin-bottom: 60px;">
+        <div style="display: flex; gap: 32px; border-bottom: 2px solid #f0ede6; padding-bottom: 14px; margin-bottom: 28px;">
+            <h3 style="font-size: 1.3rem; color: var(--color-primary); border-bottom: 3px solid var(--color-accent); padding-bottom: 12px; margin-bottom: -17px;">Description & Benefits</h3>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 36px;">
+            <div>
+                <h4 style="font-size: 1.1rem; margin-bottom: 10px; color: var(--color-secondary);"><i class="fa-solid fa-book-open"></i> Full Description</h4>
+                <p style="color: var(--color-text-muted); line-height: 1.7;">{{ product.description }}</p>
+
+                {% if product.benefits %}
+                    <h4 style="font-size: 1.1rem; margin: 24px 0 10px; color: var(--color-secondary);"><i class="fa-solid fa-star-of-life"></i> Key Benefits</h4>
+                    <p style="color: var(--color-text-muted); line-height: 1.7;">{{ product.benefits }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                {% if product.ingredients %}
+                    <h4 style="font-size: 1.1rem; margin-bottom: 10px; color: var(--color-secondary);"><i class="fa-solid fa-mortar-pestle"></i> Active Ingredients</h4>
+                    <p style="background: #faf8f5; padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--color-accent); color: var(--color-text-main); font-weight: 500;">
+                        {{ product.ingredients }}
+                    </p>
+                {% endif %}
+
+                {% if product.usage_instructions %}
+                    <h4 style="font-size: 1.1rem; margin: 24px 0 10px; color: var(--color-secondary);"><i class="fa-solid fa-prescription-bottle-medical"></i> Recommended Dosage & Usage</h4>
+                    <p style="background: #eef5f2; padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--color-secondary); color: var(--color-primary); font-weight: 500;">
+                        {{ product.usage_instructions }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div style="margin-bottom: 60px;">
+        <div class="section-header" style="text-align: left; margin-bottom: 36px;">
+            <span class="section-subtitle">Customer Experiences</span>
+            <h2 class="section-title">Verified Patron Reviews</h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px;">
+            <!-- Review List -->
+            <div>
+                {% if reviews %}
+                    {% for review in reviews %}
+                        <div style="background: #ffffff; border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--color-border); margin-bottom: 20px; box-shadow: var(--shadow-soft);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong style="font-size: 1.05rem; color: var(--color-primary);">{{ review.user_name }}</strong>
+                                <span style="font-size: 0.8rem; color: #888;">{{ review.created_at|date:"M d, Y" }}</span>
+                            </div>
+                            <div style="color: #f39c12; font-size: 0.9rem; margin-bottom: 10px;">
+                                <i class="fa-solid fa-star"></i> {{ review.rating }} / 5.0
+                            </div>
+                            <p style="color: var(--color-text-muted);">"{{ review.comment }}"</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--color-text-muted);">No reviews written yet. Be the first to share your experience!</p>
+                {% endif %}
+            </div>
+
+            <!-- Write Review Form -->
+            <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft); height: fit-content;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 16px;">Write a Product Review</h3>
+                <form action="{% url 'add_review' product.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Your Full Name</label>
+                        <input type="text" name="user_name" class="form-control" placeholder="e.g. Aditi Sharma" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select name="rating" class="form-control">
+                            <option value="5">⭐⭐⭐⭐⭐ (5/5 - Excellent)</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5 - Very Good)</option>
+                            <option value="3">⭐⭐⭐ (3/5 - Average)</option>
+                            <option value="2">⭐⭐ (2/5 - Fair)</option>
+                            <option value="1">⭐ (1/5 - Poor)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Feedback / Comment</label>
+                        <textarea name="comment" rows="4" class="form-control" placeholder="Share your experience with this Ayurvedic remedy..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
