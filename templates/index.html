@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AyurvedaVeda - Authentic Organic Herbs & Ayurvedic Remedies{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-banner">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <h2>Ancient Wisdom &bull; Modern Wellness</h2>
+            <h1>Pure Botanical Healing For Your Body & Soul</h1>
+            <p>Experience authentic Ayurvedic elixirs, organic Churnas, Kumkumadi facial fluids, and herbal teas. Formulated strictly according to classical Charaka Samhita texts.</p>
+            <div class="hero-buttons">
+                <a href="{% url 'product_list' %}" class="btn-primary">
+                    <i class="fa-solid fa-store"></i> Shop Herbal Remedies
+                </a>
+                <a href="#" class="btn-secondary" onclick="document.getElementById('open-dosha-modal').click(); return false;">
+                    <i class="fa-solid fa-fire-flame-curved"></i> Dosha Assessment
+                </a>
+            </div>
+            <div class="hero-badges">
+                <div class="hero-badge-item">
+                    <i class="fa-solid fa-leaf"></i>
+                    <span>100% Wild Crafted Herbs</span>
+                </div>
+                <div class="hero-badge-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Zero Synthetics / Paraben Free</span>
+                </div>
+                <div class="hero-badge-item">
+                    <i class="fa-solid fa-award"></i>
+                    <span>AYUSH Certified Formulations</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-glass-card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span class="brand-font" style="font-size: 2.2rem; color: var(--color-accent); font-weight: 700;">Ojas & Vitality</span>
+                <p style="font-size: 0.95rem; color: #e0e7e4; margin-top: 6px;">Restore balance between Vata, Pitta & Kapha.</p>
+            </div>
+            <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(212,175,55,0.2); display: flex; align-items: center; justify-content: center; color: var(--color-accent); font-size: 1.2rem;">
+                        <i class="fa-solid fa-sun"></i>
+                    </div>
+                    <div>
+                        <strong style="color: #ffffff;">Vata Balance</strong>
+                        <p style="font-size: 0.85rem; color: #c5d3ce;">Warmth, grounding & deep nourishment</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(212,175,55,0.2); display: flex; align-items: center; justify-content: center; color: var(--color-accent); font-size: 1.2rem;">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <div>
+                        <strong style="color: #ffffff;">Pitta Cooling</strong>
+                        <p style="font-size: 0.85rem; color: #c5d3ce;">Soothing inflammation & soothing mind</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(212,175,55,0.2); display: flex; align-items: center; justify-content: center; color: var(--color-accent); font-size: 1.2rem;">
+                        <i class="fa-solid fa-mountain"></i>
+                    </div>
+                    <div>
+                        <strong style="color: #ffffff;">Kapha Invigoration</strong>
+                        <p style="font-size: 0.85rem; color: #c5d3ce;">Lightness, circulation & metabolic detox</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Holistic Offerings</span>
+            <h2 class="section-title">Explore Herbal Categories</h2>
+            <p class="section-desc">Handcrafted organic formulations designed for full systemic vitality and holistic healing.</p>
+        </div>
+
+        <div class="categories-grid">
+            {% for cat in categories %}
+                <a href="{% url 'category_products' cat.slug %}" class="category-card">
+                    <div class="category-icon">
+                        <i class="fa-solid {{ cat.icon }}"></i>
+                    </div>
+                    <h3>{{ cat.name }}</h3>
+                    <p>{{ cat.description|truncatewords:8 }}</p>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Showcase -->
+<section class="section" style="background: #f4f1ea; border-radius: 24px; padding: 70px 0;">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Bestsellers</span>
+            <h2 class="section-title">Featured Ayurvedic Formulations</h2>
+            <p class="section-desc">Our most cherished remedies loved by thousands across the globe.</p>
+        </div>
+
+        <div class="products-grid">
+            {% for product in featured_products %}
+                <div class="product-card">
+                    <div class="product-badge-group">
+                        {% if product.discount_percent > 0 %}
+                            <span class="badge-discount">{{ product.discount_percent }}% OFF</span>
+                        {% endif %}
+                        <span class="badge-dosha">{{ product.get_dosha_type_display }}</span>
+                    </div>
+
+                    <a href="{% url 'product_detail' product.slug %}" class="product-img-wrapper">
+                        <img src="{{ product.get_image_url }}" alt="{{ product.name }}" loading="lazy">
+                    </a>
+
+                    <div class="product-content">
+                        <span class="product-category">{{ product.category.name }}</span>
+                        <a href="{% url 'product_detail' product.slug %}" class="product-title">{{ product.name }}</a>
+                        <p class="product-subtitle">{{ product.subtitle }}</p>
+
+                        <div class="product-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <strong>{{ product.rating }}</strong>
+                            <span>({{ product.review_count }} reviews)</span>
+                        </div>
+
+                        <div class="product-footer">
+                            <div class="price-box">
+                                <span class="price-current">₹{{ product.current_price|floatformat:0 }}</span>
+                                {% if product.discount_price and product.discount_price < product.price %}
+                                    <span class="price-old">₹{{ product.price|floatformat:0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <button type="button" class="btn-add-cart js-add-cart-ajax" data-url="{% url 'add_to_cart' product.id %}">
+                                <i class="fa-solid fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div style="text-align: center; margin-top: 48px;">
+            <a href="{% url 'product_list' %}" class="btn-primary">
+                View All Remedies <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Ayurveda -->
+<section class="section container">
+    <div class="features-banner">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 36px;">
+                <span class="section-subtitle" style="color: var(--color-accent);">Purity Guarantee</span>
+                <h2 class="section-title" style="color: #ffffff;">Why Trust AyurvedaVeda?</h2>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-box">
+                    <i class="fa-solid fa-mortar-pestle"></i>
+                    <h4>Classical Formulations</h4>
+                    <p>Prepared following strictly preserved Charaka & Sushruta Samhita procedures.</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-seedling"></i>
+                    <h4>Sustainably Harvested</h4>
+                    <p>Wild-crafted from unpolluted high Himalayan and Western Ghat reserves.</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-vial-circle-check"></i>
+                    <h4>Lab Tested Purity</h4>
+                    <p>Heavy metal tested, pesticide-free, and certified 100% organic.</p>
+                </div>
+                <div class="feature-box">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <h4>Doctor Consultation</h4>
+                    <p>Free Dosha evaluation and personalized botanical care plans.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="section" style="padding-bottom: 90px;">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Real Results</span>
+            <h2 class="section-title">What Our Patrons Say</h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px;">
+            <div style="background: #ffffff; border-radius: var(--radius-md); padding: 30px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft);">
+                <div style="color: #f39c12; margin-bottom: 12px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p style="font-style: italic; color: var(--color-text-muted); margin-bottom: 20px;">"The Kumkumadi Miraculous Beauty Fluid completely transformed my skin texture within two weeks. My dark spots faded and my face has a natural golden glow!"</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-secondary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                        PS
+                    </div>
+                    <div>
+                        <strong style="color: var(--color-primary); display: block;">Priya Sundaram</strong>
+                        <span style="font-size: 0.85rem; color: #888;">Verified Buyer &bull; Bengaluru</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #ffffff; border-radius: var(--radius-md); padding: 30px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft);">
+                <div style="color: #f39c12; margin-bottom: 12px; font-size: 1.1rem;">
+                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p style="font-style: italic; color: var(--color-text-muted); margin-bottom: 20px;">"Organic Ashwagandha Churna has given me back peaceful sleep after years of stressful work shifts. Genuine purity you can taste."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--color-primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                        MK
+                    </div>
+                    <div>
+                        <strong style="color: var(--color-primary); display: block;">Vikram Menon</strong>
+                        <span style="font-size: 0.85rem; color: #888;">Verified Buyer &bull; Mumbai</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

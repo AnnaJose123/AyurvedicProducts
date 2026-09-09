@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VedaVeda - Authentic Ayurvedic Products & Organic Herbs{% endblock %}</title>
+    <meta name="description" content="Discover 100% natural Ayurvedic formulations, organic supplements, Kumkumadi face oils, and wellness teas crafted according to classical Samhita wisdom.">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Master CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Top Announcement Bar -->
+    <div class="top-bar">
+        <i class="fa-solid fa-seedling"></i> 100% Pure Organic Ayurvedic Formulations &nbsp;|&nbsp; <span>Free Shipping on Orders Above ₹499</span>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container nav-wrapper">
+            <a href="{% url 'home' %}" class="brand-logo">
+                <i class="fa-solid fa-leaf"></i>
+                <div>
+                    <h1>Ayurveda<span>Veda</span></h1>
+                </div>
+            </a>
+
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                <li><a href="{% url 'product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Store Catalog</a></li>
+                {% for cat in all_categories|slice:":3" %}
+                    <li><a href="{% url 'category_products' cat.slug %}">{{ cat.name }}</a></li>
+                {% endfor %}
+            </ul>
+
+            <div class="nav-actions">
+                <form action="{% url 'product_list' %}" method="GET" class="search-bar-header">
+                    <input type="text" name="q" placeholder="Search herbs..." value="{{ search_query|default:'' }}">
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+
+                <a href="#" class="btn-dosha-quiz" id="open-dosha-modal">
+                    <i class="fa-solid fa-fire-flame-curved"></i> Find Dosha
+                </a>
+
+                <a href="{% url 'cart_detail' %}" class="cart-icon-btn" title="View Cart">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    {% if cart_count > 0 %}
+                        <span class="cart-badge">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Flash Messages -->
+    <div class="container messages-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fa-solid fa-circle-info"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Page Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Dosha Modal Quiz -->
+    <div class="modal-overlay" id="dosha-quiz-modal">
+        <div class="modal-card">
+            <button class="modal-close" id="close-dosha-modal"><i class="fa-solid fa-xmark"></i></button>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <span style="color: var(--color-accent-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px;">Ayurvedic Consultation</span>
+                <h2 style="font-size: 1.8rem; margin-top: 6px;">Discover Your Mind-Body Dosha</h2>
+                <p style="color: var(--color-text-muted); font-size: 0.95rem;">Select your dominant physical traits to receive tailored Ayurvedic product recommendations.</p>
+            </div>
+
+            <form action="{% url 'dosha_quiz' %}" method="GET">
+                <div class="form-group">
+                    <label>1. How does your skin feel most of the time?</label>
+                    <select name="dosha" class="form-control">
+                        <option value="vata">Dry, rough, thin or sensitive to cold (Vata)</option>
+                        <option value="pitta">Sensitive, warm, prone to redness or breakouts (Pitta)</option>
+                        <option value="kapha">Oily, smooth, soft and cool to touch (Kapha)</option>
+                        <option value="all">Balanced or Tridoshic</option>
+                    </select>
+                </div>
+
+                <div style="text-align: center; margin-top: 24px;">
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Get My Recommended Herbal Kit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="brand-logo" style="margin-bottom: 16px;">
+                    <i class="fa-solid fa-leaf" style="color: var(--color-accent);"></i>
+                    <h3 style="color: #ffffff; font-size: 1.6rem;">Ayurveda<span style="color: var(--color-accent);">Veda</span></h3>
+                </div>
+                <p>Pure classical Ayurvedic science crafted with sustainable botanical harvesting. Restoring mind, body, and soul balance for over 5000 years.</p>
+                <div style="display: flex; gap: 16px; font-size: 1.2rem; margin-top: 16px; color: var(--color-accent);">
+                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-facebook"></i>
+                    <i class="fa-brands fa-youtube"></i>
+                    <i class="fa-brands fa-pinterest"></i>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Herbal Categories</h4>
+                <ul class="footer-links">
+                    {% for cat in all_categories %}
+                        <li><a href="{% url 'category_products' cat.slug %}"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: var(--color-accent);"></i> {{ cat.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'product_list' %}">All Products Catalog</a></li>
+                    <li><a href="{% url 'cart_detail' %}">Shopping Cart</a></li>
+                    <li><a href="#" onclick="document.getElementById('open-dosha-modal').click(); return false;">Dosha Consultation Quiz</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Ayurvedic Guarantee</h4>
+                <p><i class="fa-solid fa-certificate" style="color: var(--color-accent);"></i> 100% Organic & Non-GMO</p>
+                <p><i class="fa-solid fa-flask" style="color: var(--color-accent);"></i> Heavy Metal Tested</p>
+                <p><i class="fa-solid fa-truck-fast" style="color: var(--color-accent);"></i> Express Delivery Nationwide</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; {% now "Y" %} AyurvedicProducts (AyurvedaVeda) by AnnaJose123. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Master JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
