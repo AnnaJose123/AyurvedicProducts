@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - AyurvedaVeda Store{% endblock %}
+
+{% block content %}
+<div class="container section" style="padding-top: 40px;">
+    <h1 style="font-size: 2.2rem; margin-bottom: 28px;"><i class="fa-solid fa-lock" style="color: var(--color-secondary);"></i> Secure Ayurvedic Order Checkout</h1>
+
+    <form action="{% url 'checkout' %}" method="POST">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 380px; gap: 36px;">
+            <!-- Shipping Information Form -->
+            <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 32px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft);">
+                <h3 style="font-size: 1.3rem; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 2px solid #f0ede6;"><i class="fa-solid fa-truck-ramp-box" style="color: var(--color-accent-dark);"></i> Shipping Address</h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="full_name" class="form-control" placeholder="e.g. Ramesh Varma" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="ramesh@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Complete Shipping Address *</label>
+                    <textarea name="address" rows="3" class="form-control" placeholder="House/Flat No., Street, Landmark" required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>City *</label>
+                        <input type="text" name="city" class="form-control" placeholder="City" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>State *</label>
+                        <input type="text" name="state" class="form-control" placeholder="State" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>PIN Code *</label>
+                        <input type="text" name="pincode" class="form-control" placeholder="600001" required>
+                    </div>
+                </div>
+
+                <!-- Payment Method Options -->
+                <h3 style="font-size: 1.3rem; margin: 32px 0 20px; padding-bottom: 12px; border-bottom: 2px solid #f0ede6;"><i class="fa-solid fa-credit-card" style="color: var(--color-accent-dark);"></i> Select Payment Method</h3>
+
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); cursor: pointer; background: #faf8f5;">
+                        <input type="radio" name="payment_method" value="cod" checked style="accent-color: var(--color-primary);">
+                        <div>
+                            <strong>Cash on Delivery (COD)</strong>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted);">Pay upon physical delivery to your doorstep.</p>
+                        </div>
+                    </label>
+
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); cursor: pointer;">
+                        <input type="radio" name="payment_method" value="upi" style="accent-color: var(--color-primary);">
+                        <div>
+                            <strong>Instant UPI / QR Code (Google Pay, PhonePe, Paytm)</strong>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted);">Fast & secure instant online payment.</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div style="background: #ffffff; border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--color-border); box-shadow: var(--shadow-soft); height: fit-content;">
+                <h3 style="font-size: 1.3rem; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f0ede6;">Items in Order</h3>
+
+                <div style="max-height: 260px; overflow-y: auto; margin-bottom: 20px; padding-right: 6px;">
+                    {% for item in cart_items %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.9rem;">
+                            <div>
+                                <strong>{{ item.quantity }}x</strong> {{ item.product.name|truncatechars:24 }}
+                            </div>
+                            <span>₹{{ item.total_price|floatformat:0 }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div style="border-top: 1px solid #f0ede6; padding-top: 14px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Subtotal</span>
+                        <span>₹{{ subtotal|floatformat:0 }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Delivery</span>
+                        <span>{% if delivery_fee == 0 %}FREE{% else %}₹{{ delivery_fee }}{% endif %}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: 700; color: var(--color-primary); margin-top: 14px; padding-top: 12px; border-top: 2px solid var(--color-primary);">
+                        <span>Total Payable</span>
+                        <span>₹{{ grand_total|floatformat:0 }}</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; margin-top: 28px;">
+                    Confirm & Place Order <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
