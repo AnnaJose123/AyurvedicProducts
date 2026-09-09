@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Your Personal Dosha Recommendations - AyurvedaVeda Store{% endblock %}
+
+{% block content %}
+<div class="container section" style="padding-top: 40px;">
+    <!-- Results Header -->
+    <div style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: #ffffff; padding: 48px; border-radius: var(--radius-lg); margin-bottom: 40px; text-align: center;">
+        <span style="color: var(--color-accent); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem;">Ayurvedic Analysis Complete</span>
+        <h1 style="color: #ffffff; font-size: 2.6rem; margin-top: 8px;">Recommended For Your {{ dosha|capfirst }} Constitution</h1>
+        <p style="color: #d1deda; max-width: 650px; margin: 10px auto 0;">Based on your assessment, these classical herbal remedies are specifically formulated to soothe, balance, and rejuvenate your dominant body energy.</p>
+    </div>
+
+    <!-- Recommendations Grid -->
+    {% if recommended_products %}
+        <div class="products-grid">
+            {% for product in recommended_products %}
+                <div class="product-card">
+                    <div class="product-badge-group">
+                        {% if product.discount_percent > 0 %}
+                            <span class="badge-discount">{{ product.discount_percent }}% OFF</span>
+                        {% endif %}
+                        <span class="badge-dosha">{{ product.get_dosha_type_display }}</span>
+                    </div>
+
+                    <a href="{% url 'product_detail' product.slug %}" class="product-img-wrapper">
+                        <img src="{{ product.get_image_url }}" alt="{{ product.name }}" loading="lazy">
+                    </a>
+
+                    <div class="product-content">
+                        <span class="product-category">{{ product.category.name }}</span>
+                        <a href="{% url 'product_detail' product.slug %}" class="product-title">{{ product.name }}</a>
+                        <p class="product-subtitle">{{ product.subtitle }}</p>
+
+                        <div class="product-rating">
+                            <i class="fa-solid fa-star"></i>
+                            <strong>{{ product.rating }}</strong>
+                            <span>({{ product.review_count }})</span>
+                        </div>
+
+                        <div class="product-footer">
+                            <div class="price-box">
+                                <span class="price-current">₹{{ product.current_price|floatformat:0 }}</span>
+                                {% if product.discount_price and product.discount_price < product.price %}
+                                    <span class="price-old">₹{{ product.price|floatformat:0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <button type="button" class="btn-add-cart js-add-cart-ajax" data-url="{% url 'add_to_cart' product.id %}">
+                                <i class="fa-solid fa-cart-plus"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="background: #ffffff; padding: 60px; border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--color-border);">
+            <p>No specific products found for this profile. Explore our general store catalog!</p>
+            <a href="{% url 'product_list' %}" class="btn-primary" style="margin-top: 16px;">Explore All Products</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
