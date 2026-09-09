@@ -4,65 +4,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}VedaVeda - Authentic Ayurvedic Products & Organic Herbs{% endblock %}</title>
-    <meta name="description" content="Discover 100% natural Ayurvedic formulations, organic supplements, Kumkumadi face oils, and wellness teas crafted according to classical Samhita wisdom.">
+    <title>{% block title %}Panchakosha &bull; Medicine That Reads The Whole Body{% endblock %}</title>
+    <meta name="description" content="Traditional Kerala Ayurveda. Oil therapies, wild-harvested organic herbs, and diet drawn from classical Kerala practice—treating the person, not the symptom.">
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Master CSS -->
+    <!-- Master Award CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <!-- Top Announcement Bar -->
-    <div class="top-bar">
-        <i class="fa-solid fa-seedling"></i> 100% Pure Organic Ayurvedic Formulations &nbsp;|&nbsp; <span>Free Shipping on Orders Above ₹499</span>
+    <!-- 1. Preloader Tear-Away (Percentage Counter) -->
+    <div id="preloader">
+        <div class="preloader-brand">Panchakosha</div>
+        <div class="preloader-counter">0%</div>
+        <div class="preloader-line">
+            <div class="preloader-progress"></div>
+        </div>
     </div>
 
-    <!-- Header Navigation -->
+    <!-- 2. Custom Lerped Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Navigation Header -->
     <header class="navbar">
         <div class="container nav-wrapper">
-            <a href="{% url 'home' %}" class="brand-logo">
-                <i class="fa-solid fa-leaf"></i>
-                <div>
-                    <h1>Ayurveda<span>Veda</span></h1>
-                </div>
-            </a>
+            <a href="{% url 'home' %}" class="brand-title">Panchakosha</a>
 
-            <ul class="nav-menu">
-                <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
-                <li><a href="{% url 'product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Store Catalog</a></li>
-                {% for cat in all_categories|slice:":3" %}
-                    <li><a href="{% url 'category_products' cat.slug %}">{{ cat.name }}</a></li>
-                {% endfor %}
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Philosophy</a></li>
+                <li><a href="{% url 'product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Treatments</a></li>
+                <li><a href="#" onclick="document.getElementById('open-dosha-modal').click(); return false;">Doshas</a></li>
             </ul>
 
             <div class="nav-actions">
-                <form action="{% url 'product_list' %}" method="GET" class="search-bar-header">
-                    <input type="text" name="q" placeholder="Search herbs..." value="{{ search_query|default:'' }}">
-                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </form>
-
-                <a href="#" class="btn-dosha-quiz" id="open-dosha-modal">
-                    <i class="fa-solid fa-fire-flame-curved"></i> Find Dosha
+                <a href="{% url 'product_list' %}" class="btn-magnetic">
+                    Book a Visit
                 </a>
 
-                <a href="{% url 'cart_detail' %}" class="cart-icon-btn" title="View Cart">
+                <a href="{% url 'cart_detail' %}" style="position: relative; color: var(--color-ivory); font-size: 1.2rem; margin-left: 10px;" title="View Cart">
                     <i class="fa-solid fa-bag-shopping"></i>
                     {% if cart_count > 0 %}
-                        <span class="cart-badge">{{ cart_count }}</span>
+                        <span class="cart-badge" style="position: absolute; top: -6px; right: -8px; background: var(--color-brass); color: var(--color-ink); font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">{{ cart_count }}</span>
                     {% endif %}
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- Main Flash Messages -->
-    <div class="container messages-container">
+    <!-- 4. Infinite Pure CSS Marquee -->
+    <div class="marquee-container" style="margin-top: 80px;">
+        <div class="marquee-track">
+            <div class="marquee-item">Ashwagandha Churna <span class="dot"></span></div>
+            <div class="marquee-item">Kashmiri Saffron Kumkumadi <span class="dot"></span></div>
+            <div class="marquee-item">Swarna Bhasma Chyawanprash <span class="dot"></span></div>
+            <div class="marquee-item">Bringadi Hair Oil <span class="dot"></span></div>
+            <div class="marquee-item">Holy Basil Tulsi Detox <span class="dot"></span></div>
+            <div class="marquee-item">Triphala Rasayana <span class="dot"></span></div>
+            <div class="marquee-item">Wild Turmeric Ubtan <span class="dot"></span></div>
+            <div class="marquee-item">Brahmi Memory Elixir <span class="dot"></span></div>
+        </div>
+        <!-- Doubled track for infinite loop -->
+        <div class="marquee-track">
+            <div class="marquee-item">Ashwagandha Churna <span class="dot"></span></div>
+            <div class="marquee-item">Kashmiri Saffron Kumkumadi <span class="dot"></span></div>
+            <div class="marquee-item">Swarna Bhasma Chyawanprash <span class="dot"></span></div>
+            <div class="marquee-item">Bringadi Hair Oil <span class="dot"></span></div>
+            <div class="marquee-item">Holy Basil Tulsi Detox <span class="dot"></span></div>
+            <div class="marquee-item">Triphala Rasayana <span class="dot"></span></div>
+            <div class="marquee-item">Wild Turmeric Ubtan <span class="dot"></span></div>
+            <div class="marquee-item">Brahmi Memory Elixir <span class="dot"></span></div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <div class="container" style="margin-top: 20px;">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    <i class="fa-solid fa-circle-info"></i> {{ message }}
+                <div style="background: rgba(199, 154, 75, 0.15); color: var(--color-brass); border: 1px solid var(--color-brass); padding: 14px 20px; border-radius: var(--radius-sm); margin-bottom: 16px; font-weight: 500;">
+                    <i class="fa-solid fa-leaf"></i> {{ message }}
                 </div>
             {% endfor %}
         {% endif %}
@@ -73,32 +94,28 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Dosha Modal Quiz -->
-    <div class="modal-overlay" id="dosha-quiz-modal">
-        <div class="modal-card">
-            <button class="modal-close" id="close-dosha-modal"><i class="fa-solid fa-xmark"></i></button>
-            <div style="text-align: center; margin-bottom: 24px;">
-                <span style="color: var(--color-accent-dark); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px;">Ayurvedic Consultation</span>
-                <h2 style="font-size: 1.8rem; margin-top: 6px;">Discover Your Mind-Body Dosha</h2>
-                <p style="color: var(--color-text-muted); font-size: 0.95rem;">Select your dominant physical traits to receive tailored Ayurvedic product recommendations.</p>
-            </div>
+    <!-- Dosha Consultation Modal -->
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,21,12,0.85); backdrop-filter: blur(12px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 20px;" id="dosha-quiz-modal">
+        <div style="background: var(--color-ink-moss); border: 1px solid var(--color-brass); border-radius: var(--radius-lg); width: 100%; max-width: 580px; padding: 40px; position: relative; color: var(--color-ivory);">
+            <button style="position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: var(--color-brass); font-size: 1.5rem; cursor: pointer;" id="close-dosha-modal">&times;</button>
+            <span style="color: var(--color-brass); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;">Ayurvedic Consultation</span>
+            <h2 style="font-size: 2.2rem; margin: 8px 0 16px;" class="serif-italic">Discover Your Mind-Body Dosha</h2>
+            <p style="color: rgba(246,241,226,0.7); font-size: 0.95rem; margin-bottom: 24px;">Select your physical skin & energy tendency to receive personalized remedy recommendations.</p>
 
             <form action="{% url 'dosha_quiz' %}" method="GET">
-                <div class="form-group">
-                    <label>1. How does your skin feel most of the time?</label>
-                    <select name="dosha" class="form-control">
-                        <option value="vata">Dry, rough, thin or sensitive to cold (Vata)</option>
-                        <option value="pitta">Sensitive, warm, prone to redness or breakouts (Pitta)</option>
-                        <option value="kapha">Oily, smooth, soft and cool to touch (Kapha)</option>
-                        <option value="all">Balanced or Tridoshic</option>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem;">Skin & Energy Profile:</label>
+                    <select name="dosha" style="width: 100%; padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid rgba(199,154,75,0.4); background: var(--color-ink); color: var(--color-ivory); font-family: inherit;">
+                        <option value="vata">Vata (Dry, cool skin, active mind, light build)</option>
+                        <option value="pitta">Pitta (Warm skin, sensitive, sharp focus, medium build)</option>
+                        <option value="kapha">Kapha (Smooth, cool skin, calm demeanor, sturdy build)</option>
+                        <option value="all">Tridoshic (Balanced or all body types)</option>
                     </select>
                 </div>
 
-                <div style="text-align: center; margin-top: 24px;">
-                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Get My Recommended Herbal Kit
-                    </button>
-                </div>
+                <button type="submit" class="btn-magnetic" style="width: 100%; margin-top: 10px;">
+                    Get Personalized Kit
+                </button>
             </form>
         </div>
     </div>
@@ -106,51 +123,39 @@
     <!-- Footer -->
     <footer>
         <div class="container footer-grid">
-            <div class="footer-col">
-                <div class="brand-logo" style="margin-bottom: 16px;">
-                    <i class="fa-solid fa-leaf" style="color: var(--color-accent);"></i>
-                    <h3 style="color: #ffffff; font-size: 1.6rem;">Ayurveda<span style="color: var(--color-accent);">Veda</span></h3>
-                </div>
-                <p>Pure classical Ayurvedic science crafted with sustainable botanical harvesting. Restoring mind, body, and soul balance for over 5000 years.</p>
-                <div style="display: flex; gap: 16px; font-size: 1.2rem; margin-top: 16px; color: var(--color-accent);">
-                    <i class="fa-brands fa-instagram"></i>
-                    <i class="fa-brands fa-facebook"></i>
-                    <i class="fa-brands fa-youtube"></i>
-                    <i class="fa-brands fa-pinterest"></i>
-                </div>
+            <div>
+                <h3 class="brand-title" style="margin-bottom: 16px;">Panchakosha</h3>
+                <p>Traditional Kerala Ayurveda — Nilambur. Oil therapies, organic herbs, and diet drawn from classical Kerala practice—treating the person, not the symptom.</p>
             </div>
 
-            <div class="footer-col">
-                <h4>Herbal Categories</h4>
+            <div>
+                <h4>Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}">Philosophy</a></li>
+                    <li><a href="{% url 'product_list' %}">Treatments & Herbs</a></li>
+                    <li><a href="#" onclick="document.getElementById('open-dosha-modal').click(); return false;">Dosha Evaluation</a></li>
+                    <li><a href="{% url 'cart_detail' %}">Cart & Checkout</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Ayurvedic Categories</h4>
                 <ul class="footer-links">
                     {% for cat in all_categories %}
-                        <li><a href="{% url 'category_products' cat.slug %}"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: var(--color-accent);"></i> {{ cat.name }}</a></li>
+                        <li><a href="{% url 'category_products' cat.slug %}">{{ cat.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <div class="footer-col">
-                <h4>Quick Navigation</h4>
-                <ul class="footer-links">
-                    <li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'product_list' %}">All Products Catalog</a></li>
-                    <li><a href="{% url 'cart_detail' %}">Shopping Cart</a></li>
-                    <li><a href="#" onclick="document.getElementById('open-dosha-modal').click(); return false;">Dosha Consultation Quiz</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Ayurvedic Guarantee</h4>
-                <p><i class="fa-solid fa-certificate" style="color: var(--color-accent);"></i> 100% Organic & Non-GMO</p>
-                <p><i class="fa-solid fa-flask" style="color: var(--color-accent);"></i> Heavy Metal Tested</p>
-                <p><i class="fa-solid fa-truck-fast" style="color: var(--color-accent);"></i> Express Delivery Nationwide</p>
+            <div>
+                <h4>Clinic Location</h4>
+                <p>Nilambur Forest Reserve Region,<br>Kerala 679329, India</p>
+                <p style="color: var(--color-brass); margin-top: 12px;"><i class="fa-solid fa-phone"></i> +91 4931 220100</p>
             </div>
         </div>
 
-        <div class="footer-bottom">
-            <div class="container">
-                <p>&copy; {% now "Y" %} AyurvedicProducts (AyurvedaVeda) by AnnaJose123. All Rights Reserved.</p>
-            </div>
+        <div style="text-align: center; font-size: 0.85rem; color: rgba(246,241,226,0.4); border-top: 1px solid rgba(246,241,226,0.05); padding-top: 24px;" class="container">
+            &copy; {% now "Y" %} Panchakosha Ayurveda by AnnaJose123. All Rights Reserved.
         </div>
     </footer>
 
